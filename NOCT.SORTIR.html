@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NOCT.SORTIR</title>
+<style>
+:root{--bg:#f7f4ee;--surface:#fffdf9;--line:#e4dfd5;--ink:#4a4843;--mute:#9a968c;--cream:#efe6d2;--good:#cfe3d0;--good-ink:#4d6b50;--trash:#ead2cf;--trash-ink:#8a5550;--shadow:0 10px 30px rgba(120,110,90,.10);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a2927;--surface:#33322f;--line:#45433f;--ink:#ece8df;--mute:#a09b90;--cream:#4a4538;--good:#3d5240;--good-ink:#cfe6d1;--trash:#59403d;--trash-ink:#f0d3cf;--shadow:0 10px 30px rgba(0,0,0,.3)}}
+:root[data-theme="dark"]{--bg:#2a2927;--surface:#33322f;--line:#45433f;--ink:#ece8df;--mute:#a09b90;--cream:#4a4538;--good:#3d5240;--good-ink:#cfe6d1;--trash:#59403d;--trash-ink:#f0d3cf;--shadow:0 10px 30px rgba(0,0,0,.3)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:"Inter","Helvetica Neue",Arial,sans-serif;display:flex;flex-direction:column}
+header{display:flex;justify-content:space-between;align-items:center;padding:22px 28px}
+.logo{font-weight:600;letter-spacing:.32em;font-size:13px}
+.logo span{color:var(--mute)}
+.stat{font-size:12px;color:var(--mute);letter-spacing:.12em}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:12px 20px 32px}
+.view{display:none;width:100%;max-width:720px;flex-direction:column;align-items:center;text-align:center}
+.view.on{display:flex}
+h1{font-weight:300;font-size:clamp(28px,6vw,44px);letter-spacing:.04em;margin:0 0 10px}
+p.sub{color:var(--mute);margin:0 0 34px;font-size:15px;line-height:1.6;max-width:420px}
+.drop{width:100%;max-width:460px;border:1.5px dashed var(--line);background:var(--surface);border-radius:28px;padding:54px 28px;cursor:pointer;transition:.2s}
+.drop:hover,.drop.over{background:var(--cream);border-color:var(--mute)}
+.drop .ic{font-size:30px;margin-bottom:12px;opacity:.7}
+.drop b{font-weight:500;display:block;margin-bottom:6px}
+.drop small{color:var(--mute)}
+.note{margin-top:22px;font-size:12px;color:var(--mute);max-width:380px;line-height:1.6}
+.stage{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:14px;position:relative}
+.imgbox{height:min(58vh,520px);display:flex;align-items:center;justify-content:center;border-radius:18px;background:var(--cream);overflow:hidden;position:relative}
+.imgbox img{max-width:100%;max-height:100%;object-fit:contain;transition:transform .25s,opacity .25s}
+.imgbox img.go-good{transform:translateX(60px) rotate(3deg);opacity:0}
+.imgbox img.go-trash{transform:translateX(-60px) rotate(-3deg);opacity:0}
+.meta{display:flex;justify-content:space-between;padding:12px 6px 2px;font-size:12px;color:var(--mute);gap:12px}
+.meta .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{width:100%;height:3px;background:var(--line);border-radius:3px;margin:18px 0 22px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--mute);transition:width .3s}
+.actions{display:flex;gap:14px;justify-content:center;width:100%}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:14px 30px;font-size:14px;letter-spacing:.08em;transition:.18s}
+button:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+button:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-good{background:var(--good);color:var(--good-ink);border-color:transparent;flex:1;max-width:220px}
+.btn-trash{background:var(--trash);color:var(--trash-ink);border-color:transparent;flex:1;max-width:220px}
+.btn-sm{padding:10px 18px;font-size:12px}
+kbd{font-family:inherit;font-size:10px;opacity:.6;border:1px solid currentColor;border-radius:5px;padding:1px 5px;margin-left:8px}
+.tools{margin-top:18px;display:flex;gap:10px;align-items:center;color:var(--mute);font-size:12px;flex-wrap:wrap;justify-content:center}
+.sum{display:flex;gap:16px;margin:8px 0 30px}
+.sum div{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px 34px;min-width:130px}
+.sum strong{display:block;font-size:34px;font-weight:300}
+.sum span{font-size:11px;letter-spacing:.14em;color:var(--mute)}
+.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn-main{background:var(--ink);color:var(--bg);border-color:transparent}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%)}
+@media (max-width:480px){.actions{gap:10px}button{padding:14px 18px}.sum div{padding:18px 22px;min-width:110px}kbd{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">NOCT<span>.SORTIR</span></div>
+  <div class="stat" id="stat"></div>
+</header>
+<main>
+  <section class="view on" id="v-start">
+    <h1>Pilih, bukan menumpuk.</h1>
+    <p class="sub">Masukkan satu folder foto, lalu putuskan satu per satu: layak atau dibuang.</p>
+    <label class="drop" id="drop">
+      <div class="ic">◌</div>
+      <b>Pilih folder foto</b>
+      <small>klik di sini untuk memilih folder</small>
+      <input type="file" id="pick" webkitdirectory directory multiple hidden>
+    </label>
+    <p class="note">Semua proses berjalan di perangkatmu. Foto asli tidak diubah atau dihapus; foto yang kamu tandai Good akan disalin ke folder baru.</p>
+  </section>
+
+  <section class="view" id="v-sort">
+    <div class="stage">
+      <div class="imgbox"><img id="img" alt=""></div>
+      <div class="meta"><span class="name" id="name"></span><span id="pos"></span></div>
+    </div>
+    <div class="bar"><i id="prog"></i></div>
+    <div class="actions">
+      <button class="btn-trash" id="bt">Trash<kbd>←</kbd></button>
+      <button class="btn-good" id="bg">Good<kbd>→</kbd></button>
+    </div>
+    <div class="tools">
+      <button class="btn-sm" id="undo">↶ Urungkan</button>
+      <button class="btn-sm" id="finish">Selesai &amp; simpan</button>
+    </div>
+  </section>
+
+  <section class="view" id="v-end">
+    <h1>Selesai disortir.</h1>
+    <p class="sub">Foto yang layak siap disimpan ke folder baru.</p>
+    <div class="sum">
+      <div><strong id="sg">0</strong><span>GOOD</span></div>
+      <div><strong id="st">0</strong><span>TRASH</span></div>
+    </div>
+    <div class="row">
+      <button class="btn-main" id="zip">Simpan Good sebagai ZIP</button>
+      <button id="dir" style="display:none">Simpan ke folder</button>
+      <button id="back">← Kembali</button>
+      <button id="again">Mulai lagi</button>
+    </div>
+    <p class="note" id="endnote"></p>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var files=[],idx=0,dec=[],url=null,busy=false;
+  var views=['v-start','v-sort','v-end'];
+  function show(id){views.forEach(function(v){$(v).classList.toggle('on',v===id)})}
+  function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove('on')},2800)}
+  function count(v){return dec.filter(function(d){return d===v}).length}
+  function upd(){
+    $('stat').textContent=files.length?('GOOD '+count('g')+'  ·  TRASH '+count('t')):'';
+    $('prog').style.width=files.length?(idx/files.length*100)+'%':'0';
+  }
+  function render(){
+    if(idx>=files.length){return end()}
+    if(url)URL.revokeObjectURL(url);
+    url=URL.createObjectURL(files[idx]);
+    var im=$('img');im.className='';im.src=url;
+    $('name').textContent=files[idx].name;
+    $('pos').textContent=(idx+1)+' / '+files.length;
+    $('undo').disabled=idx===0;
+    upd();
+  }
+  function end(){
+    $('sg').textContent=count('g');$('st').textContent=count('t');
+    var left=files.length-idx;
+    $('endnote').textContent=left>0?(left+' foto belum disortir dan tidak ikut disimpan.'):'';
+    $('zip').disabled=$('dir').disabled=count('g')===0;
+    $('dir').style.display=window.showDirectoryPicker?'':'none';
+    upd();show('v-end');
+  }
+  function choose(v){
+    if(busy||idx>=files.length)return;
+    busy=true;
+    $('img').className=v==='g'?'go-good':'go-trash';
+    setTimeout(function(){dec[idx]=v;idx++;busy=false;render()},180);
+  }
+  function load(list){
+    var imgs=Array.prototype.filter.call(list,function(f){return /^image\//.test(f.type)||/\.(jpe?g|png|gif|webp|bmp|avif|heic)$/i.test(f.name)});
+    if(!imgs.length){toast('Tidak ada foto di folder itu');return}
+    imgs.sort(function(a,b){return a.name.localeCompare(b.name,undefined,{numeric:true})});
+    files=imgs;dec=[];idx=0;show('v-sort');render();
+  }
+  $('pick').addEventListener('change',function(e){load(e.target.files);e.target.value=''});
+  $('bg').onclick=function(){choose('g')};
+  $('bt').onclick=function(){choose('t')};
+  $('undo').onclick=function(){if(idx>0&&!busy){idx--;dec[idx]=null;dec.length=idx;render()}};
+  $('finish').onclick=end;
+  $('back').onclick=function(){if(idx<files.length){show('v-sort');render()}else if(files.length){idx=files.length-1;dec.length=idx;show('v-sort');render()}};
+  $('again').onclick=function(){files=[];dec=[];idx=0;upd();show('v-start')};
+  document.addEventListener('keydown',function(e){
+    if(!$('v-sort').classList.contains('on'))return;
+    var k=e.key.toLowerCase();
+    if(k==='arrowright'||k==='g'){choose('g')}
+    else if(k==='arrowleft'||k==='t'){choose('t')}
+    else if(k==='z'||k==='backspace'){$('undo').click()}
+  });
+  function goods(){return files.filter(function(f,i){return dec[i]==='g'})}
+  $('zip').onclick=async function(){
+    var g=goods();if(!g.length)return;
+    if(!window.JSZip){toast('Library ZIP gagal dimuat');return}
+    var b=$('zip'),old=b.textContent;b.disabled=true;b.textContent='Menyiapkan…';
+    try{
+      var z=new JSZip(),d=z.folder('NOCT.SORTIR_good');
+      g.forEach(function(f){d.file(f.name,f)});
+      var blob=await z.generateAsync({type:'blob',compression:'STORE'});
+      var dl=null;
+      try{dl=window.claude&&await claude.use('downloads')}catch(e){}
+      if(dl){await dl.save({filename:'NOCT.SORTIR_good.zip',data:blob});toast('ZIP disimpan')}
+      else{var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='NOCT.SORTIR_good.zip';document.body.appendChild(a);a.click();a.remove();toast('ZIP diunduh')}
+    }catch(e){if(!e||e.code!=='declined')toast('Gagal menyimpan ZIP')}
+    b.textContent=old;b.disabled=false;
+  };
+  $('dir').onclick=async function(){
+    var g=goods();if(!g.length)return;
+    try{
+      var root=await window.showDirectoryPicker({mode:'readwrite'});
+      var out=await root.getDirectoryHandle('NOCT.SORTIR_good',{create:true});
+      for(var i=0;i<g.length;i++){
+        var h=await out.getFileHandle(g[i].name,{create:true});
+        var w=await h.createWritable();await w.write(g[i]);await w.close();
+      }
+      toast(g.length+' foto disalin ke folder NOCT.SORTIR_good');
+    }catch(e){
+      if(e&&e.name==='AbortError')return;
+      toast('Browser memblokir akses folder, gunakan opsi ZIP');
+    }
+  };
+  var drop=$('drop');
+  ['dragover','dragenter'].forEach(function(n){drop.addEventListener(n,function(e){e.preventDefault();drop.classList.add('over')})});
+  ['dragleave','drop'].forEach(function(n){drop.addEventListener(n,function(e){e.preventDefault();drop.classList.remove('over')})});
+  drop.addEventListener('drop',function(e){
+    var items=e.dataTransfer&&e.dataTransfer.items;
+    if(!items||!items[0]||!items[0].webkitGetAsEntry){return}
+    var out=[];
+    function walk(en){return new Promise(function(res){
+      if(en.isFile){en.file(function(f){out.push(f);res()},function(){res()})}
+      else if(en.isDirectory){
+        var r=en.createReader(),all=[];
+        (function rd(){r.readEntries(function(es){
+          if(!es.length){Promise.all(all.map(walk)).then(res);return}
+          all=all.concat(es);rd();
+        },function(){res()})})();
+      }else res();
+    })}
+    var ens=[];for(var i=0;i<items.length;i++){var en=items[i].webkitGetAsEntry();if(en)ens.push(en)}
+    Promise.all(ens.map(walk)).then(function(){load(out)});
+  });
+})();
+</script>
+</body>
+</html>
